@@ -124,7 +124,18 @@ if (!isset($_SESSION['login'])) {
                     <i class="fas fa-arrow-circle-up me-2"></i> Pengeluaran
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="<?= $base_url ?>modules/kitab/index.php" class="nav-link <?= $directory == 'kitab' ? 'active bg-primary text-white' : '' ?>">
+                    <i class="fas fa-book me-2"></i> Master Kitab
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= $base_url ?>modules/jadwal/index.php" class="nav-link <?= $directory == 'jadwal' ? 'active bg-primary text-white' : '' ?>">
+                    <i class="fas fa-calendar-alt me-2"></i> Jadwal Pelajaran
+                </a>
+            </li>
             <li class="nav-item mt-4"><a href="<?= $base_url ?>logout.php" class="nav-link text-danger fw-bold"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
         </ul>
     </nav>
 
