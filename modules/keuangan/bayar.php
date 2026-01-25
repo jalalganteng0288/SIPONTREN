@@ -4,51 +4,65 @@ include '../../layouts/header.php';
 
 if(isset($_POST['submit'])){
     $id_santri = $_POST['id_santri'];
-    $jumlah = $_POST['jumlah'];
-    $ket = $_POST['keterangan'];
-
-    $insert = mysqli_query($conn, "INSERT INTO keuangan (id_santri, jumlah_bayar, keterangan) VALUES ('$id_santri', '$jumlah', '$ket')");
+    $syahriah = $_POST['bayar_syahriah'];
+    $masak = $_POST['bayar_masak'];
+    $beras = $_POST['beras_5kg'];
     
-    if($insert){
-        echo "<script>alert('Pembayaran Berhasil!'); window.location='index.php';</script>";
+    // Hitung total otomatis
+    $total = $syahriah + $masak;
+    
+    // Logika Status Otomatis
+    // Anggap Lunas jika Syahriah & Masak diisi (bisa kamu sesuaikan nominalnya)
+    $status = ($syahriah > 0 && $masak > 0) ? "Lunas" : "Belum Lunas";
+    $ket = mysqli_real_escape_string($conn, $_POST['keterangan']);
+
+    $query = "INSERT INTO keuangan (id_santri, jumlah_bayar, bayar_syahriah, bayar_masak, beras_5kg, status_pembayaran, keterangan) 
+              VALUES ('$id_santri', '$total', '$syahriah', '$masak', '$beras', '$status', '$ket')";
+    
+    if(mysqli_query($conn, $query)){
+        echo "<script>alert('Pembayaran Berhasil! Status: $status'); window.location='index.php';</script>";
     }
 }
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Form Input Pembayaran Syahriah</h5>
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Form Pembayaran Terpadu</h5>
+    </div>
+    <div class="card-body">
+        <form action="" method="POST">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Pilih Santri</label>
+                    <select name="id_santri" class="form-select" required>
+                        <?php
+                        $s = mysqli_query($conn, "SELECT id_santri, nama_lengkap FROM santri WHERE status='aktif'");
+                        while($d = mysqli_fetch_assoc($s)) echo "<option value='{$d['id_santri']}'>{$d['nama_lengkap']}</option>";
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Bayar Syahriah (Rp)</label>
+                    <input type="number" name="bayar_syahriah" class="form-control" placeholder="0" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Bayar Uang Masak (Rp)</label>
+                    <input type="number" name="bayar_masak" class="form-control" placeholder="0" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Beras 5kg</label>
+                    <select name="beras_5kg" class="form-select">
+                        <option value="Belum">Belum</option>
+                        <option value="Sudah">Sudah</option>
+                    </select>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Keterangan Tambahan</label>
+                    <textarea name="keterangan" class="form-control" rows="2"></textarea>
+                </div>
             </div>
-            <div class="card-body">
-                <form action="" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Pilih Santri</label>
-                        <select name="id_santri" class="form-select" required>
-                            <option value="">-- Pilih Santri --</option>
-                            <?php
-                            $s = mysqli_query($conn, "SELECT id_santri, nama_lengkap FROM santri WHERE status='aktif'");
-                            while($d = mysqli_fetch_assoc($s)){
-                                echo "<option value='{$d['id_santri']}'>{$d['nama_lengkap']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Jumlah Bayar (Rp)</label>
-                        <input type="number" name="jumlah" class="form-control" placeholder="Contoh: 200000" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan" class="form-control" placeholder="Contoh: Bayar SPP Bulan Januari 2026"></textarea>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" name="submit" class="btn btn-primary">Konfirmasi Pembayaran</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            <button type="submit" name="submit" class="btn btn-primary px-5">Konfirmasi Pembayaran</button>
+        </form>
     </div>
 </div>
 

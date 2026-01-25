@@ -3,16 +3,15 @@ include '../../config/database.php';
 include '../../layouts/header.php'; 
 
 if(isset($_POST['submit'])){
-    // Membersihkan input untuk keamanan dari SQL Injection
-    $nis = mysqli_real_escape_string($conn, $_POST['nis']);
+    // Variabel NIS dihapus agar tidak pusing
     $nama = mysqli_real_escape_string($conn, $_POST['nama_lengkap']);
     $jk = mysqli_real_escape_string($conn, $_POST['jk']);
     $alamat = mysqli_real_escape_string($conn, $_POST['alamat']);
     $tahun = mysqli_real_escape_string($conn, $_POST['tahun_masuk']);
 
-    // Query untuk menyimpan data
-    $query = "INSERT INTO santri (nis, nama_lengkap, jenis_kelamin, alamat, tahun_masuk, status) 
-              VALUES ('$nis', '$nama', '$jk', '$alamat', '$tahun', 'aktif')";
+    // Query untuk menyimpan data tanpa kolom nis
+    $query = "INSERT INTO santri (nama_lengkap, jenis_kelamin, alamat, tahun_masuk, status) 
+              VALUES ('$nama', '$jk', '$alamat', '$tahun', 'aktif')";
     
     if(mysqli_query($conn, $query)){
         echo "<script>
@@ -37,10 +36,6 @@ if(isset($_POST['submit'])){
                 <form action="" method="POST">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Nomor Induk Santri (NIS)</label>
-                            <input type="text" name="nis" class="form-control" required placeholder="Contoh: 2024001">
-                        </div>
-                        <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Nama Lengkap</label>
                             <input type="text" name="nama_lengkap" class="form-control" required placeholder="Masukkan nama lengkap">
                         </div>
@@ -56,9 +51,9 @@ if(isset($_POST['submit'])){
                             <label class="form-label fw-bold">Tahun Masuk</label>
                             <input type="number" name="tahun_masuk" class="form-control" value="<?= date('Y') ?>" required>
                         </div>
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Alamat</label>
-                            <textarea name="alamat" class="form-control" rows="3" placeholder="Alamat lengkap domisili"></textarea>
+                            <textarea name="alamat" class="form-control" rows="1" placeholder="Alamat lengkap domisili"></textarea>
                         </div>
                     </div>
                     <hr>

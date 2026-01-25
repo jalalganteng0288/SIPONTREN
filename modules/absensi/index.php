@@ -1,55 +1,39 @@
-<?php 
+<?php
 include '../../config/database.php';
-include '../../layouts/header.php'; 
+include '../../layouts/header.php';
 
 $tgl_hari_ini = date('Y-m-d');
+
+// Perbaikan Query Statistik agar tidak fatal error
+$q_hadir = mysqli_query($conn, "SELECT id_absensi FROM absensi WHERE status='Hadir' AND tanggal='$tgl_hari_ini'");
+$hadir = ($q_hadir) ? mysqli_num_rows($q_hadir) : 0;
+
+$q_sakit = mysqli_query($conn, "SELECT id_absensi FROM absensi WHERE status='Sakit' AND tanggal='$tgl_hari_ini'");
+$sakit = ($q_sakit) ? mysqli_num_rows($q_sakit) : 0;
+
+$q_izin = mysqli_query($conn, "SELECT id_absensi FROM absensi WHERE status='Izin' AND tanggal='$tgl_hari_ini'");
+$izin = ($q_izin) ? mysqli_num_rows($q_izin) : 0;
+
+$q_alpa = mysqli_query($conn, "SELECT id_absensi FROM absensi WHERE status='Tidak Hadir' AND tanggal='$tgl_hari_ini'");
+$alpa = ($q_alpa) ? mysqli_num_rows($q_alpa) : 0;
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="fas fa-check-double me-2"></i> Presensi Santri</h3>
-    <a href="input_absen.php" class="btn btn-primary"><i class="fas fa-edit me-1"></i> Isi Absen Hari Ini</a>
+    <h2 class="fw-bold mb-0">Sistem Absensi</h2>
+    <a href="tambah.php" class="btn btn-dark shadow-sm"><i class="fas fa-plus me-2"></i>Tambah Absensi</a>
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h6 class="m-0 font-weight-bold text-primary">Riwayat Absensi (Terbaru)</h6>
+<div class="row mb-4 text-center">
+    <div class="col-md-3">
+        <div class="card bg-success-subtle p-3 border-0 rounded-4 text-success small fw-bold">Hadir<br><span class="fs-2"><?= $hadir ?></span></div>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Nama Santri</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $sql = "SELECT absensi.*, santri.nama_lengkap 
-                            FROM absensi 
-                            JOIN santri ON absensi.id_santri = santri.id_santri 
-                            ORDER BY tgl_absen DESC, id_absen DESC LIMIT 20";
-                    $result = mysqli_query($conn, $sql);
-                    while($row = mysqli_fetch_assoc($result)) {
-                        $badge = '';
-                        switch($row['status_absen']) {
-                            case 'hadir': $badge = 'bg-success'; break;
-                            case 'sakit': $badge = 'bg-warning text-dark'; break;
-                            case 'izin': $badge = 'bg-info text-dark'; break;
-                            case 'alpha': $badge = 'bg-danger'; break;
-                        }
-                        echo "<tr>
-                            <td>".date('d/m/Y', strtotime($row['tgl_absen']))."</td>
-                            <td>{$row['nama_lengkap']}</td>
-                            <td><span class='badge {$badge}'>".strtoupper($row['status_absen'])."</span></td>
-                        </tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="col-md-3">
+        <div class="card bg-warning-subtle p-3 border-0 rounded-4 text-warning small fw-bold">Sakit<br><span class="fs-2"><?= $sakit ?></span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-primary-subtle p-3 border-0 rounded-4 text-primary small fw-bold">Izin<br><span class="fs-2"><?= $izin ?></span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger-subtle p-3 border-0 rounded-4 text-danger small fw-bold">Alpa<br><span class="fs-2"><?= $alpa ?></span></div>
     </div>
 </div>
-
-<?php include '../../layouts/footer.php'; ?>
