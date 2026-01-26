@@ -4,15 +4,17 @@ include '../../layouts/header.php';
 
 if(isset($_POST['submit'])){
     $tanggal = $_POST['tanggal'];
-    $santri_ids = $_POST['id_santri']; // Array dari checkbox/input
-    $statuses = $_POST['status'];      // Array status
+    $id_jadwal = $_POST['id_jadwal']; // Mengambil ID Jadwal yang dipilih
+    $santri_ids = $_POST['id_santri']; 
+    $statuses = $_POST['status'];      
 
     foreach($santri_ids as $key => $id_santri){
         $status = $statuses[$key];
         $ket = mysqli_real_escape_string($conn, $_POST['keterangan'][$key]);
         
-        $query = "INSERT INTO absensi (id_santri, tanggal, status, keterangan) 
-                  VALUES ('$id_santri', '$tanggal', '$status', '$ket')";
+        // Sekarang kita simpan juga id_jadwal agar tahu ini absen pelajaran apa
+        $query = "INSERT INTO absensi (id_santri, id_jadwal, tanggal, status, keterangan) 
+                  VALUES ('$id_santri', '$id_jadwal', '$tanggal', '$status', '$ket')";
         mysqli_query($conn, $query);
     }
     echo "<script>alert('Absensi Berhasil Disimpan!'); window.location='index.php';</script>";
@@ -20,11 +22,30 @@ if(isset($_POST['submit'])){
 ?>
 
 <div class="card shadow-sm border-0 p-4">
-    <h5 class="fw-bold mb-4"><i class="fas fa-calendar-check me-2 text-primary"></i>Input Absensi Santri</h5>
+    <h5 class="fw-bold mb-4"><i class="fas fa-calendar-check me-2 text-primary"></i>Input Absensi Per Jadwal</h5>
     <form action="" method="POST">
-        <div class="mb-4" style="max-width: 250px;">
-            <label class="form-label small fw-bold">Tanggal Absensi</label>
-            <input type="date" name="tanggal" class="form-control" value="<?= date('Y-m-d') ?>" required>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Tanggal Absensi</label>
+                <input type="date" name="tanggal" class="form-control" value="<?= date('Y-m-d') ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">Pilih Jadwal / Pelajaran</label>
+                <select name="id_jadwal" class="form-select" required>
+                    <option value="">-- Pilih Jadwal Pelajaran --</option>
+                    <?php
+                    // Mengambil jadwal lengkap dengan nama guru dan kitab
+                    $q_jadwal = mysqli_query($conn, "SELECT j.*, g.nama_guru, k.nama_kitab 
+                                                     FROM jadwal_mengajar j
+                                                     JOIN guru g ON j.id_guru = g.id_guru
+                                                     JOIN master_kitab k ON j.id_kitab = k.id_kitab
+                                                     ORDER BY j.hari ASC");
+                    while($dj = mysqli_fetch_assoc($q_jadwal)) {
+                        echo "<option value='{$dj['id_jadwal']}'>{$dj['hari']} | {$dj['nama_kitab']} ({$dj['nama_guru']}) - {$dj['kelas']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -38,7 +59,8 @@ if(isset($_POST['submit'])){
                 </thead>
                 <tbody>
                     <?php
-                    $res = mysqli_query($conn, "SELECT id_santri, nama_lengkap FROM santri WHERE status='aktif'");
+                    // Mengambil santri aktif
+                    $res = mysqli_query($conn, "SELECT id_santri, nama_lengkap FROM santri WHERE status='aktif' ORDER BY nama_lengkap ASC");
                     while($row = mysqli_fetch_assoc($res)) { ?>
                     <tr>
                         <td>
@@ -61,7 +83,7 @@ if(isset($_POST['submit'])){
         </div>
         <hr>
         <button type="submit" name="submit" class="btn btn-primary px-4">Simpan Absensi</button>
-        <a href="index.php" class="btn btn-light">Batal</a>
+        <a href="index.php" class="btn btn-light px-4">Batal</a>
     </form>
 </div>
 
