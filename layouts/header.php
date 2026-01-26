@@ -103,6 +103,36 @@ if (!isset($_SESSION['login'])) {
                 margin-left: 0;
             }
         }
+
+        /* Tambahkan ini di bagian CSS kamu */
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            overflow-y: auto;
+            /* Ini kunci agar bisa di-scroll */
+            background-color: #2c3e50;
+            padding-bottom: 50px;
+            /* Jarak agar menu paling bawah tidak tertutup */
+        }
+
+        /* Mempercantik tampilan scrollbar (Opsional) */
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        #sidebar {
+            max-height: 100vh;
+            overflow-y: auto;
+            /* Aktifkan scroll vertikal */
+        }
     </style>
 </head>
 
@@ -132,6 +162,11 @@ if (!isset($_SESSION['login'])) {
             <li class="nav-item">
                 <a href="<?= $base_url ?>modules/jadwal/index.php" class="nav-link <?= $directory == 'jadwal' ? 'active bg-primary text-white' : '' ?>">
                     <i class="fas fa-calendar-alt me-2"></i> Jadwal Pelajaran
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= $base_url ?>modules/santri_baru/index.php" class="nav-link">
+                    <i class="fas fa-user-plus"></i> Santri Baru
                 </a>
             </li>
             <li class="nav-item mt-4"><a href="<?= $base_url ?>logout.php" class="nav-link text-danger fw-bold"><i class="fas fa-sign-out-alt"></i> Logout</a></li>

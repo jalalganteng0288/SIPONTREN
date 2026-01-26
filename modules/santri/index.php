@@ -57,6 +57,7 @@ include '../../layouts/header.php';
                             <a href="hapus.php?id=<?= $row['id_santri']; ?>" class="btn btn-white btn-sm text-danger" title="Hapus Data" onclick="return confirm('Hapus data ini?')">
                                 <i class="fas fa-trash"></i>
                             </a>
+                            
                         </div>
                     </td>
                 </tr>

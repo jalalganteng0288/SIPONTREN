@@ -14,19 +14,33 @@ $total_pengeluaran = $q_keluar['total'] ?? 0;
 $saldo_akhir = $total_uang - $total_pengeluaran;
 
 // 3. Logika Hari Indonesia
-$hari_indo = ['Monday'=>'Senin', 'Tuesday'=>'Selasa', 'Wednesday'=>'Rabu', 'Thursday'=>'Kamis', 'Friday'=>'Jumat', 'Saturday'=>'Sabtu', 'Sunday'=>'Minggu'];
+$hari_indo = ['Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu'];
 $hari_sekarang = $hari_indo[date('l')];
+$total_santri_baru = mysqli_num_rows(mysqli_query($conn, "SELECT id_santri FROM santri WHERE status='baru'"));
 
-include 'layouts/header.php'; 
+include 'layouts/header.php';
 ?>
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    .stat-card { transition: transform 0.3s; border: none; }
-    .stat-card:hover { transform: translateY(-10px); }
-    .card-icon { font-size: 2.5rem; opacity: 0.3; position: absolute; right: 20px; bottom: 20px; }
+    .stat-card {
+        transition: transform 0.3s;
+        border: none;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+        opacity: 0.3;
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -79,7 +93,12 @@ include 'layouts/header.php';
                 <div class="card-body p-0">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
-                            <tr><th class="ps-4">Jam</th><th>Kitab</th><th>Guru</th><th>Kelas</th></tr>
+                            <tr>
+                                <th class="ps-4">Jam</th>
+                                <th>Kitab</th>
+                                <th>Guru</th>
+                                <th>Kelas</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <?php
@@ -88,9 +107,9 @@ include 'layouts/header.php';
                                     JOIN master_kitab k ON j.id_kitab = k.id_kitab 
                                     WHERE j.hari = '$hari_sekarang' ORDER BY j.jam_mulai ASC";
                             $res_j = mysqli_query($conn, $q_j);
-                            while($rj = mysqli_fetch_assoc($res_j)) { ?>
+                            while ($rj = mysqli_fetch_assoc($res_j)) { ?>
                                 <tr>
-                                    <td class="ps-4"><?= substr($rj['jam_mulai'],0,5) ?></td>
+                                    <td class="ps-4"><?= substr($rj['jam_mulai'], 0, 5) ?></td>
                                     <td class="fw-bold"><?= $rj['nama_kitab'] ?></td>
                                     <td><?= $rj['nama_guru'] ?></td>
                                     <td><span class="badge bg-info-subtle text-info"><?= $rj['kelas'] ?></span></td>
@@ -117,11 +136,12 @@ include 'layouts/header.php';
                 <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
                     <ul class="list-group list-group-flush">
                         <?php
-                        $bln = date('m'); $thn = date('Y');
+                        $bln = date('m');
+                        $thn = date('Y');
                         $q_t = "SELECT id_santri, nama_lengkap FROM santri WHERE status = 'aktif' AND id_santri NOT IN 
                                 (SELECT id_santri FROM keuangan WHERE MONTH(tgl_bayar) = '$bln' AND YEAR(tgl_bayar) = '$thn') LIMIT 5";
                         $res_t = mysqli_query($conn, $q_t);
-                        while($rt = mysqli_fetch_assoc($res_t)) { ?>
+                        while ($rt = mysqli_fetch_assoc($res_t)) { ?>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span class="small fw-bold"><?= $rt['nama_lengkap'] ?></span>
                                 <a href="modules/keuangan/bayar.php?id=<?= $rt['id_santri'] ?>" class="btn btn-sm btn-outline-danger py-0">Bayar</a>
@@ -140,10 +160,10 @@ include 'layouts/header.php';
                         <?php
                         $q_l = "SELECT k.*, s.nama_lengkap FROM keuangan k JOIN santri s ON k.id_santri = s.id_santri ORDER BY id_bayar DESC LIMIT 3";
                         $res_l = mysqli_query($conn, $q_l);
-                        while($rl = mysqli_fetch_assoc($res_l)) { ?>
+                        while ($rl = mysqli_fetch_assoc($res_l)) { ?>
                             <li class="list-group-item border-0 pb-3">
                                 <small class="text-muted d-block"><?= date('d M Y', strtotime($rl['tgl_bayar'])) ?></small>
-                                <span class="small"><?= $rl['nama_lengkap'] ?> membayar Rp <?= number_format($rl['jumlah_bayar'],0,',','.') ?></span>
+                                <span class="small"><?= $rl['nama_lengkap'] ?> membayar Rp <?= number_format($rl['jumlah_bayar'], 0, ',', '.') ?></span>
                             </li>
                         <?php } ?>
                     </ul>
@@ -155,7 +175,10 @@ include 'layouts/header.php';
 
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 800, once: true });
+    AOS.init({
+        duration: 800,
+        once: true
+    });
 
     // Script Grafik Keuangan
     const ctx = document.getElementById('keuanganChart').getContext('2d');
@@ -172,8 +195,16 @@ include 'layouts/header.php';
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
     });
 </script>

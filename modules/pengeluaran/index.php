@@ -1,8 +1,8 @@
-<?php 
+<?php
 include '../../config/database.php';
-include '../../layouts/header.php'; 
+include '../../layouts/header.php';
 
-if(isset($_POST['simpan'])){
+if (isset($_POST['simpan'])) {
     $tgl = $_POST['tgl_pengeluaran'];
     $jenis = $_POST['jenis_pengeluaran'];
     $jumlah = $_POST['jumlah_pengeluaran'];
@@ -25,22 +25,36 @@ if(isset($_POST['simpan'])){
     </div>
     <div class="col-md-8">
         <div class="card p-3 shadow-sm border-0">
-            <h5 class="fw-bold">Riwayat Pengeluaran</h5>
-            <table class="table small">
-                <thead><tr><th>Tanggal</th><th>Jenis</th><th>Jumlah</th></tr></thead>
-                <tbody>
-                    <?php
-                    $q = mysqli_query($conn, "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC");
-                    while($r = mysqli_fetch_assoc($q)){
-                        echo "<tr>
-                            <td>{$r['tgl_pengeluaran']}</td>
-                            <td>{$r['jenis_pengeluaran']}</td>
-                            <td class='text-danger'>Rp ".number_format($r['jumlah_pengeluaran'], 0, ',', '.')."</td>
-                        </tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+            <h5 class="fw-bold"><i class="fas fa-history me-2 text-danger"></i>Riwayat Pengeluaran</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle small">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jenis Pengeluaran</th>
+                            <th>Jumlah</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $q = mysqli_query($conn, "SELECT * FROM pengeluaran ORDER BY tgl_pengeluaran DESC");
+                        while ($r = mysqli_fetch_assoc($q)) { ?>
+                            <tr>
+                                <td><?= date('d/m/Y', strtotime($r['tgl_pengeluaran'])) ?></td>
+                                <td class="fw-bold"><?= $r['jenis_pengeluaran'] ?></td>
+                                <td class="text-danger fw-bold">Rp <?= number_format($r['jumlah_pengeluaran'], 0, ',', '.') ?></td>
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm">
+                                        <a href="edit.php?id=<?= $r['id_pengeluaran'] ?>" class="btn btn-white btn-sm text-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <a href="hapus.php?id=<?= $r['id_pengeluaran'] ?>" class="btn btn-white btn-sm text-danger" onclick="return confirm('Hapus riwayat pengeluaran ini?')" title="Hapus"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
