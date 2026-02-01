@@ -13,24 +13,23 @@ if (isset($_POST['submit'])) {
     $telp   = mysqli_real_escape_string($conn, $_POST['no_telp']);
     $alamat = mysqli_real_escape_string($conn, $_POST['alamat']);
     $biaya  = $_POST['biaya_pendaftaran'];
-
+    // TAMBAHKAN DUA VARIABEL INI:
+    $biaya_kitab  = $_POST['biaya_kitab'];
+    $status_kitab = $_POST['status_kitab'];
     // Proses Upload Foto Pribadi
     $foto_pribadi = "";
     if ($_FILES['foto_pribadi']['name'] != "") {
         $target_dir = "../../assets/uploads/santri/";
-        // Buat folder jika belum ada
         if (!is_dir($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
-
         $foto_pribadi = time() . "_" . $_FILES["foto_pribadi"]["name"];
         move_uploaded_file($_FILES["foto_pribadi"]["tmp_name"], $target_dir . $foto_pribadi);
     }
 
-    // Query INSERT dengan status 'baru' agar selaras
-    $query = "INSERT INTO santri (nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, tanggal_masuk, nama_ayah, nama_ibu, alamat, no_telp, foto_pribadi, biaya_pendaftaran, status) 
-              VALUES ('$nama', '$jk', '$tmpt', '$tgl_l', '$tgl_m', '$ayah', '$ibu', '$alamat', '$telp', '$foto_pribadi', '$biaya', 'baru')";
-
+    // UPDATE QUERY INSERT (Tambahkan kolom biaya_kitab dan status_kitab):
+    $query = "INSERT INTO santri (nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, tanggal_masuk, nama_ayah, nama_ibu, alamat, no_telp, foto_pribadi, biaya_pendaftaran, biaya_kitab, status_kitab, status) 
+          VALUES ('$nama', '$jk', '$tmpt', '$tgl_l', '$tgl_m', '$ayah', '$ibu', '$alamat', '$telp', '$foto_pribadi', '$biaya', '$biaya_kitab', '$status_kitab', 'baru')";
     if (mysqli_query($conn, $query)) {
         echo "<script>alert('Santri Baru Berhasil Didaftarkan!'); window.location='index.php';</script>";
     } else {
@@ -38,7 +37,6 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
-
 <div class="container py-4" data-aos="fade-up">
     <div class="card border-0 shadow-lg">
         <div class="card-header bg-primary text-white py-3">

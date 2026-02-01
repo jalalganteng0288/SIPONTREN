@@ -5,117 +5,151 @@ $s = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM santri WHERE id_santr
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>KTS - <?= $s['nama_lengkap'] ?></title>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <style>
-        body { 
-            display: flex; 
-            justify-content: center; 
-            padding-top: 50px; 
-            background: #eee; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body {
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            background: #eee;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
+
         .card-kts {
-            width: 85mm; 
-            height: 55mm; 
-            background: white; 
+            width: 85mm;
+            height: 55mm;
+            background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
-            padding: 15px; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 15px;
             position: relative;
             border: 1px solid #ddd;
             overflow: hidden;
-            background-image: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url('../../assets/img/bg-pesantren.jpg');
+            background-size: cover;
+            background-position: center;
         }
-        /* Variasi Background Kartu */
-        .card-kts::before {
-            content: "";
+
+        /* Header Setup */
+        .header {
+            position: relative;
+            border-bottom: 2px solid #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            min-height: 45px;
+        }
+
+        .logo-atp {
             position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: rgba(0, 123, 255, 0.05);
-            border-radius: 50%;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
         }
-        .header { 
-            text-align: center; 
-            border-bottom: 2px solid #2c3e50; 
-            margin-bottom: 12px; 
-            padding-bottom: 5px;
+
+        .header-text {
+            text-align: center;
+            /* Teks di tengah */
+            width: 100%;
         }
-        .header h4 { margin: 0; font-size: 14px; color: #2c3e50; text-transform: uppercase; letter-spacing: 1px; }
-        .header p { margin: 2px 0 0; font-size: 10px; color: #007bff; font-weight: bold; }
-        
-        /* Area Foto */
-        .photo { 
-            width: 24mm; 
-            height: 32mm; 
-            background: #f0f0f0; 
-            border: 1px solid #ccc; 
-            float: left; 
-            margin-right: 15px; 
-            overflow: hidden;
+
+        .header h4 {
+            margin: 0;
+            font-size: 13px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 9px;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Foto & Data Identitas */
+        .photo {
+            width: 22mm;
+            height: 29mm;
+            border: 2px solid #2c3e50;
+            float: left;
+            margin-right: 15px;
             border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: #fff;
         }
+
         .photo img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Menjaga agar foto tidak penyet */
+            object-fit: cover;
         }
 
-        .data { font-size: 11px; line-height: 1.5; color: #333; }
-        .data b { color: #555; width: 70px; display: inline-block; }
-        
-        .footer { 
-            position: absolute; 
-            bottom: 8px; 
-            right: 15px; 
-            font-size: 8px; 
-            color: #999; 
+        .data {
+            font-size: 10.5px;
+            line-height: 1.6;
+            color: #333;
+            text-align: left;
+        }
+
+        .data b {
+            display: inline-block;
+            width: 65px;
+            color: #555;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 8px;
+            right: 15px;
+            font-size: 8px;
+            color: #777;
             font-style: italic;
         }
 
-        /* Tombol Cetak Manual (Hilang saat diprint) */
         @media print {
-            .no-print { display: none; }
-            body { background: none; padding: 0; }
-            .card-kts { box-shadow: none; border: 1px solid #000; }
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .card-kts {
+                box-shadow: none;
+                -webkit-print-color-adjust: exact;
+            }
         }
     </style>
 </head>
-<body onload="setTimeout(function(){ window.print(); }, 1500)">
 
-    <div class="card-kts" data-aos="flip-up" data-aos-duration="1000">
+<body onload="setTimeout(function(){ window.print(); }, 1200)">
+    <div class="card-kts" data-aos="zoom-in">
         <div class="header">
-            <h4>KARTU TANDA SANTRI</h4>
-            <p>PONPES ATTAUPIQILLAH</p>
+            <img src="../../assets/img/logo-attaupiqillah.png" class="logo-atp">
+            <div class="header-text">
+                <h4>KARTU TANDA SANTRI</h4>
+                <p>PONPES ATTAUPIQILLAH GARUT</p>
+            </div>
         </div>
-        
         <div class="photo">
-            <?php if(!empty($s['foto_pribadi'])): ?>
-                <img src="../../assets/uploads/santri/<?= $s['foto_pribadi'] ?>" alt="Foto Santri">
-            <?php else: ?>
-                <div style="text-align:center; padding-top:40%; font-size:8px; color:#ccc;">Tanpa Foto</div>
-            <?php endif; ?>
+            <img src="../../assets/uploads/santri/<?= $s['foto_pribadi'] ?>" alt="Foto">
         </div>
-
         <div class="data">
-            <b>Nama</b>: <?= $s['nama_lengkap'] ?><br>
-            <b>TTL</b>: <?= $s['tempat_lahir'] ?>, <?= date('d-m-Y', strtotime($s['tanggal_lahir'])) ?><br>
+            <span style="font-size: 11px; font-weight: bold; color: #000; display: block; margin-bottom: 3px;">
+                <?= $s['nama_lengkap'] ?></span>
             <b>ID Santri</b>: ATQ-<?= str_pad($s['id_santri'], 4, '0', STR_PAD_LEFT) ?><br>
-            <b>Thn Masuk</b>: <?= $s['tahun_masuk'] ?><br>
-            <b>Alamat</b>: <?= (strlen($s['alamat']) > 45) ? substr($s['alamat'], 0, 45) . '...' : $s['alamat']; ?>
+            <b>TTL</b>: <?= $s['tempat_lahir'] ?>, <?= date('d-m-Y', strtotime($s['tanggal_lahir'])) ?><br>
+            <b>Alamat</b>: <?= (strlen($s['alamat']) > 45) ? substr($s['alamat'], 0, 42) . '...' : $s['alamat']; ?>
         </div>
-        
-        <div class="footer">Sistem SiPontren - <?= date('d/m/Y H:i') ?></div>
+        <div class="footer">Dicetak otomatis oleh SiPontren - <?= date('Y') ?></div>
     </div>
-
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
         AOS.init();
     </script>
 </body>
+
 </html>
